@@ -1,0 +1,462 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Sri Lankan Food Menu - Customer</title>
+  <style>
+    /* Reset & basics */
+    * {
+      box-sizing: border-box;
+    }
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      margin: 0;
+      background: #fafafa;
+      color: #333;
+      display: flex;
+      min-height: 100vh;
+      flex-direction: column;
+    }
+    header {
+      background-color: #009688;
+      color: white;
+      padding: 20px 30px;
+      text-align: center;
+      font-size: 1.8rem;
+      font-weight: 700;
+      letter-spacing: 1px;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.15);
+    }
+
+    main {
+      flex: 1;
+      display: flex;
+      gap: 30px;
+      padding: 30px;
+      max-width: 1200px;
+      margin: 0 auto;
+      width: 100%;
+    }
+
+    /* Food Menu */
+    .menu-section {
+      flex: 3;
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+
+    #categorySelect {
+      width: 200px;
+      padding: 8px 12px;
+      font-size: 1rem;
+      border-radius: 6px;
+      border: 1.5px solid #009688;
+      color: #00796b;
+      font-weight: 600;
+      outline-offset: 2px;
+      cursor: pointer;
+      margin-bottom: 20px;
+      align-self: flex-start;
+    }
+
+    .menu {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 25px;
+    }
+    .item {
+      background: white;
+      border-radius: 12px;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+      overflow: hidden;
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+      display: flex;
+      flex-direction: column;
+      cursor: pointer;
+    }
+    .item:hover {
+      transform: translateY(-8px);
+      box-shadow: 0 10px 20px rgba(0,0,0,0.15);
+    }
+    .item img {
+      width: 100%;
+      height: 160px;
+      object-fit: cover;
+      border-bottom: 1px solid #ddd;
+      transition: transform 0.3s ease;
+    }
+    .item:hover img {
+      transform: scale(1.05);
+    }
+    .item-content {
+      padding: 15px 20px;
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+    .item-content h3 {
+      margin: 0 0 8px 0;
+      font-size: 1.2rem;
+      color: #00796b;
+    }
+    .item-content p {
+      margin: 0 0 15px 0;
+      font-size: 1rem;
+      font-weight: 600;
+      color: #555;
+    }
+    .item-content button {
+      background-color: #009688;
+      border: none;
+      color: white;
+      padding: 12px;
+      font-size: 1rem;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+      user-select: none;
+    }
+    .item-content button:hover {
+      background-color: #00796b;
+    }
+
+    /* Order Panel */
+    .order-panel {
+      flex: 1;
+      background: white;
+      border-radius: 12px;
+      padding: 25px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+      display: flex;
+      flex-direction: column;
+      max-height: 600px;
+      position: sticky;
+      top: 30px;
+    }
+    .order-panel h2 {
+      margin-top: 0;
+      color: #00796b;
+      font-weight: 700;
+      font-size: 1.5rem;
+      border-bottom: 2px solid #009688;
+      padding-bottom: 8px;
+    }
+    #ordersUl {
+      flex: 1;
+      margin-top: 15px;
+      overflow-y: auto;
+      padding-left: 0;
+      font-size: 1rem;
+      color: #444;
+      list-style: none;
+    }
+    #ordersUl li {
+      margin-bottom: 10px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 1px solid #eee;
+      padding-bottom: 6px;
+      gap: 8px;
+    }
+    #ordersUl li span {
+      font-weight: 600;
+    }
+    #ordersUl li .item-info {
+      flex-grow: 1;
+      display: flex;
+      gap: 10px;
+      align-items: center;
+    }
+    #ordersUl li button.remove-btn {
+      background: #e53935;
+      border: none;
+      color: white;
+      padding: 4px 8px;
+      font-size: 0.85rem;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+      user-select: none;
+    }
+    #ordersUl li button.remove-btn:hover {
+      background-color: #b71c1c;
+    }
+
+    .totals {
+      margin-top: 15px;
+      font-size: 1.1rem;
+      font-weight: 700;
+      color: #009688;
+      border-top: 2px solid #009688;
+      padding-top: 10px;
+      display: flex;
+      justify-content: space-between;
+    }
+
+    /* Table selector */
+    label[for="table"] {
+      font-weight: 600;
+      font-size: 1rem;
+      margin-right: 10px;
+      color: #00796b;
+    }
+    #table {
+      padding: 8px 12px;
+      font-size: 1rem;
+      border-radius: 6px;
+      border: 1.5px solid #009688;
+      color: #00796b;
+      font-weight: 600;
+      outline-offset: 2px;
+      cursor: pointer;
+    }
+
+    /* Notification */
+    #notification {
+      margin-top: 20px;
+      padding: 15px;
+      background-color: #e0f7fa;
+      border-left: 5px solid #009688;
+      color: #00796b;
+      font-weight: 700;
+      font-size: 1.1rem;
+      border-radius: 6px;
+      display: none;
+      text-align: center;
+      user-select: none;
+    }
+
+    /* Responsive adjustments */
+    @media (max-width: 900px) {
+      main {
+        flex-direction: column;
+      }
+      .order-panel {
+        position: relative;
+        max-height: none;
+        margin-top: 30px;
+      }
+      #categorySelect {
+        width: 100%;
+      }
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  Sri Lankan Food Menu
+</header>
+
+<main>
+  <section class="menu-section">
+    <label for="categorySelect">Select Food Category:</label>
+    <select id="categorySelect">
+      <option value="Sri Lankan">Sri Lankan</option>
+      <option value="Chinese">Chinese</option>
+      <option value="Indian">Indian</option>
+    </select>
+
+    <section class="menu" id="menu"></section>
+  </section>
+
+  <aside class="order-panel">
+    <label for="table">Select Your Table:</label><br />
+    <select id="table">
+      <option value="Table 1">Table 1</option>
+      <option value="Table 2">Table 2</option>
+      <option value="Table 3">Table 3</option>
+    </select>
+
+    <h2>Your Orders</h2>
+    <ul id="ordersUl"></ul>
+
+    <div class="totals">
+      <div>Total Items:</div>
+      <div id="totalItems">0</div>
+    </div>
+    <div class="totals">
+      <div>Total Price:</div>
+      <div>Rs. <span id="totalPrice">0</span></div>
+    </div>
+
+    <div id="notification">Your food is being delivered by robot. Please wait.</div>
+  </aside>
+</main>
+
+<script>
+  // Food items categorized
+  const foodItems = [
+    // Sri Lankan
+    {name: "Rice and Curry", price: 250, img: "https://cdn.pixabay.com/photo/2017/02/01/18/30/rice-2031463_1280.jpg", category: "Sri Lankan"},
+    {name: "Kottu Roti", price: 300, img: "https://cdn.pixabay.com/photo/2020/02/04/14/55/kottu-roti-4825837_1280.jpg", category: "Sri Lankan"},
+    {name: "Hoppers (Appa)", price: 150, img: "https://cdn.pixabay.com/photo/2020/08/23/10/30/hoppers-5509987_1280.jpg", category: "Sri Lankan"},
+    {name: "Lamprais", price: 200, img: "https://cdn.pixabay.com/photo/2021/05/01/10/46/lamprais-6211983_1280.jpg", category: "Sri Lankan"},
+    {name: "Fish Ambul Thiyal", price: 180, img: "https://cdn.pixabay.com/photo/2020/10/18/19/42/fish-5656986_1280.jpg", category: "Sri Lankan"},
+    {name: "Pol Sambol", price: 120, img: "https://cdn.pixabay.com/photo/2017/07/25/07/48/pol-sambol-2534369_1280.jpg", category: "Sri Lankan"},
+    {name: "Devilled Chicken", price: 160, img: "https://cdn.pixabay.com/photo/2017/03/14/15/16/devilled-chicken-2140520_1280.jpg", category: "Sri Lankan"},
+    {name: "String Hoppers", price: 100, img: "https://cdn.pixabay.com/photo/2019/11/16/15/12/string-hoppers-4626532_1280.jpg", category: "Sri Lankan"},
+    {name: "Egg Curry", price: 130, img: "https://cdn.pixabay.com/photo/2021/05/01/09/55/egg-curry-6211966_1280.jpg", category: "Sri Lankan"},
+    {name: "Sambol", price: 90, img: "https://cdn.pixabay.com/photo/2019/08/23/12/08/sambal-4421483_1280.jpg", category: "Sri Lankan"},
+
+    // Chinese
+    {name: "Kung Pao Chicken", price: 350, img: "https://cdn.pixabay.com/photo/2017/02/06/23/30/kung-pao-chicken-2049247_1280.jpg", category: "Chinese"},
+    {name: "Spring Rolls", price: 180, img: "https://cdn.pixabay.com/photo/2018/01/14/10/20/spring-rolls-3080066_1280.jpg", category: "Chinese"},
+    {name: "Sweet and Sour Pork", price: 400, img: "https://cdn.pixabay.com/photo/2017/06/27/18/56/sweet-and-sour-pork-2446553_1280.jpg", category: "Chinese"},
+    {name: "Fried Rice", price: 250, img: "https://cdn.pixabay.com/photo/2017/01/10/19/05/fried-rice-1969748_1280.jpg", category: "Chinese"},
+
+    // Indian
+    {name: "Butter Chicken", price: 400, img: "https://cdn.pixabay.com/photo/2016/03/05/19/02/butter-chicken-1239277_1280.jpg", category: "Indian"},
+    {name: "Naan Bread", price: 120, img: "https://cdn.pixabay.com/photo/2018/11/29/20/22/naan-3845061_1280.jpg", category: "Indian"},
+    {name: "Biryani", price: 350, img: "https://cdn.pixabay.com/photo/2018/03/07/14/10/biryani-3204576_1280.jpg", category: "Indian"},
+    {name: "Samosa", price: 150, img: "https://cdn.pixabay.com/photo/2017/10/18/20/25/samosa-2866887_1280.jpg", category: "Indian"}
+  ];
+
+  const menuDiv = document.getElementById('menu');
+  const ordersUl = document.getElementById('ordersUl');
+  const totalItemsSpan = document.getElementById('totalItems');
+  const totalPriceSpan = document.getElementById('totalPrice');
+  const notificationDiv = document.getElementById('notification');
+  const tableSelect = document.getElementById('table');
+  const categorySelect = document.getElementById('categorySelect');
+
+  let orders = [];
+
+  // Generate unique ID
+  function generateUniqueId() {
+    return Date.now().toString() + Math.random().toString(36).substr(2, 5);
+  }
+
+  function renderMenu() {
+    menuDiv.innerHTML = '';
+    const selectedCategory = categorySelect.value;
+    const filteredItems = foodItems.filter(item => item.category === selectedCategory);
+
+    filteredItems.forEach(item => {
+      const div = document.createElement('div');
+      div.className = 'item';
+      div.innerHTML = `
+        <img src="${item.img}" alt="${item.name}" />
+        <div class="item-content">
+          <h3>${item.name}</h3>
+          <p>Rs. ${item.price}</p>
+          <button onclick="placeOrder('${item.name}', ${item.price})">Order</button>
+        </div>
+      `;
+      menuDiv.appendChild(div);
+    });
+  }
+
+  function placeOrder(name, price) {
+    const table = tableSelect.value;
+
+    // Check if item already ordered on this table (pending)
+    let existingOrder = orders.find(o => o.table === table && o.item === name && o.status === 'pending');
+    if(existingOrder){
+      existingOrder.quantity++;
+      existingOrder.totalPrice = existingOrder.price * existingOrder.quantity;
+      localStorage.setItem(existingOrder.id, JSON.stringify(existingOrder));
+    } else {
+      const id = generateUniqueId();
+      const order = { table, item: name, price, quantity: 1, totalPrice: price, status: 'pending', id };
+      orders.push(order);
+      localStorage.setItem(id, JSON.stringify(order));
+    }
+    alert(`Order placed for ${name} from ${table}`);
+    renderOrders();
+  }
+
+  function renderOrders() {
+    ordersUl.innerHTML = '';
+    let totalItems = 0;
+    let totalPrice = 0;
+
+    orders.forEach(order => {
+      if(order.table === tableSelect.value && order.status === 'pending'){
+        const li = document.createElement('li');
+
+        const itemInfoDiv = document.createElement('div');
+        itemInfoDiv.className = 'item-info';
+        itemInfoDiv.innerHTML = `
+          <span>${order.item}</span>
+          <span>Qty: ${order.quantity}</span>
+          <span>Rs. ${order.totalPrice}</span>
+        `;
+
+        const removeBtn = document.createElement('button');
+        removeBtn.className = 'remove-btn';
+        removeBtn.textContent = 'Remove';
+        removeBtn.onclick = () => removeOrder(order.id);
+
+        li.appendChild(itemInfoDiv);
+        li.appendChild(removeBtn);
+        ordersUl.appendChild(li);
+
+        totalItems += order.quantity;
+        totalPrice += order.totalPrice;
+      }
+    });
+
+    totalItemsSpan.textContent = totalItems;
+    totalPriceSpan.textContent = totalPrice;
+  }
+
+  function removeOrder(id) {
+    localStorage.removeItem(id);
+    orders = orders.filter(o => o.id !== id);
+    renderOrders();
+  }
+
+  function checkStatus() {
+    for(let i=0; i<localStorage.length; i++) {
+      const key = localStorage.key(i);
+      try {
+        const order = JSON.parse(localStorage.getItem(key));
+        if(order && order.table === tableSelect.value && order.status === 'done') {
+          notificationDiv.style.display = 'block';
+          localStorage.removeItem(key);
+          orders = orders.filter(o => o.id !== order.id);
+          renderOrders();
+
+          // Hide notification after 5 seconds
+          setTimeout(() => {
+            notificationDiv.style.display = 'none';
+          }, 5000);
+        }
+      } catch {}
+    }
+  }
+
+  // Initialize orders from localStorage
+  window.onload = () => {
+    orders = [];
+    for(let i=0; i<localStorage.length; i++){
+      const key = localStorage.key(i);
+      try {
+        const order = JSON.parse(localStorage.getItem(key));
+        if(order) orders.push(order);
+      } catch {}
+    }
+    renderMenu();
+    renderOrders();
+  };
+
+  tableSelect.addEventListener('change', () => {
+    notificationDiv.style.display = 'none';
+    renderOrders();
+  });
+
+  categorySelect.addEventListener('change', () => {
+    renderMenu();
+  });
+
+  setInterval(checkStatus, 2000);
+
+</script>
+
+</body>
+</html>
